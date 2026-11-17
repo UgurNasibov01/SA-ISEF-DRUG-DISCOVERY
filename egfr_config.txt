@@ -1,0 +1,7 @@
+receptor = egfr_receptor.pdbqt
+center_x = -48.873
+center_y = 0.574
+center_z = -25.128
+size_x = 20
+size_y = 20 
+size_z = 20

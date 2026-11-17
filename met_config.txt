@@ -1,0 +1,7 @@
+receptor = met_receptor.pdbqt
+center_x = 21.696
+center_y = 83.729
+center_z = 4.282
+size_x = 20
+size_y = 20
+size_z = 20
