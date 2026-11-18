@@ -28,9 +28,9 @@ receptor = KRAS_G12C_receptor.pdbqt
 center_x = 4.94
 center_y = -0.31
 center_z = -13.55
-size_x = 20
-size_y = 20
-size_z = 20
+size_x = 30
+size_y = 30
+size_z = 30
 
 
 4. KRAS üçün docking
@@ -65,9 +65,9 @@ receptor = MET_receptor.pdbqt
 center_x = 21.696
 center_y = 83.729
 center_z = 4.282
-size_x = 20
-size_y = 20
-size_z = 20
+size_x = 30
+size_y = 30
+size_z = 30
 
 
 7. MET üçün docking
@@ -102,9 +102,9 @@ receptor = EGFR_receptor.pdbqt
 center_x = -48.873
 center_y = 0.574
 center_z = -25.128
-size_x = 20
-size_y = 20
-size_z = 20
+size_x = 30
+size_y = 30
+size_z = 30
 
 
 10. EGFR üçün docking
