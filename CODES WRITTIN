@@ -1,1 +1,155 @@
+cd "C:\Users\ACER\Downloads\isef project"
 
+
+2. KRAS G12C zülalının hazırlanması
+2.1. KRAS strukturundan OHY ligandının çıxarılması
+Get-Content KRAS_G12C.pdb | Where-Object { $_ -notmatch "OHY" } | Set-Content KRAS_G12C_noOHY.pdb
+
+
+2.2. Yalnız zülal atomlarının saxlanılması
+findstr "^ATOM" KRAS_G12C_noOHY.pdb > KRAS_G12C_protein.pdb
+
+
+2.3. Faylın ASCII formatına çevrilməsi
+Get-Content KRAS_G12C_protein.pdb | Set-Content KRAS_G12C_protein_ascii.pdb -Encoding ascii
+
+
+2.4. A zəncirinin seçilməsi
+Get-Content KRAS_G12C_protein_ascii.pdb | Where-Object { $_.Substring(21,1) -eq "A" } | Set-Content KRAS_G12C_A.pdb -Encoding ascii
+
+
+2.5. KRAS receptor-un hazırlanması
+C:\Users\ACER\AppData\Local\Programs\Python\Python312\Scripts\mk_prepare_receptor.exe --read_pdb KRAS_G12C_A.pdb -o KRAS_G12C_receptor -p --default_altloc A
+
+
+3. KRAS docking konfiqurasiya faylı
+Faylın adı: KRAS_config.txt
+receptor = KRAS_G12C_receptor.pdbqt
+center_x = 4.94
+center_y = -0.31
+center_z = -13.55
+size_x = 20
+size_y = 20
+size_z = 20
+
+
+4. KRAS üçün docking
+Catechin ilə ilk sınaq:
+.\Vina.exe --config KRAS_config.txt --ligand Catechin.pdbqt --out KRAS_Catechin_out.pdbqt
+
+
+Qalan ligandların avtomatik docking edilməsi:
+Get-ChildItem *.pdbqt | Where-Object {$_.Name -notlike "*_out.pdbqt" -and $_.Name -notlike "*receptor.pdbqt"} | Where-Object {$_.Name -ne "catechin.pdbqt"} | ForEach-Object { .\Vina.exe --config KRAS_config.txt --ligand $_.FullName --out "KRAS_$($_.BaseName)_out.pdbqt" }
+
+
+5. MET zülalının hazırlanması
+5.1. MET strukturunun ASCII formatına çevrilməsi
+Get-Content MET.pdb | Set-Content MET_ascii.pdb -Encoding ascii
+
+
+5.2. MET receptor-un hazırlanması
+C:\Users\ACER\AppData\Local\Programs\Python\Python312\Scripts\mk_prepare_receptor.exe --read_pdb MET_ascii.pdb -o MET_receptor -p --delete_bad_res
+
+
+5.3. Kristal ligand VGH atomlarının çıxarılması
+findstr "^HETATM" MET.pdb | findstr "VGH" > VGH.txt
+
+
+5.4. VGH koordinatlarının çıxarılması
+Get-Content VGH.txt | ForEach-Object { $_.Substring(30,24) } | Set-Content VGH_coords.txt
+
+
+6. MET docking konfiqurasiya faylı
+Faylın adı: MET_config.txt
+receptor = MET_receptor.pdbqt
+center_x = 21.696
+center_y = 83.729
+center_z = 4.282
+size_x = 20
+size_y = 20
+size_z = 20
+
+
+7. MET üçün docking
+Catechin ilə ilk sınaq:
+.\Vina.exe --config MET_config.txt --ligand Catechin.pdbqt --out MET_Catechin_out.pdbqt
+
+
+Qalan ligandların avtomatik docking edilməsi:
+Get-ChildItem *.pdbqt | Where-Object {$_.Name -notlike "*_out.pdbqt" -and $_.Name -notlike "*receptor.pdbqt"} | Where-Object {$_.Name -ne "catechin.pdbqt"} | ForEach-Object { .\Vina.exe --config MET_config.txt --ligand $_.FullName --out "MET_$($_.BaseName)_out.pdbqt" }
+
+
+8. EGFR zülalının hazırlanması
+8.1. EGFR strukturunun ASCII formatına çevrilməsi
+Get-Content EGFR.pdb | Set-Content EGFR_ascii.pdb -Encoding ascii
+
+
+8.2. EGFR receptor-un hazırlanması
+C:\Users\ACER\AppData\Local\Programs\Python\Python312\Scripts\mk_prepare_receptor.exe --read_pdb EGFR_ascii.pdb -o EGFR_receptor -p --default_altloc A
+
+
+8.3. Kristal ligand 03P atomlarının çıxarılması
+findstr "^HETATM" EGFR.pdb | findstr "03P" > 03P.txt
+
+
+8.4. 03P koordinatlarının çıxarılması
+Get-Content 03P.txt | ForEach-Object { $_.Substring(30,24) } | Set-Content 03P_coords.txt
+
+
+9. EGFR docking konfiqurasiya faylı
+Faylın adı: EGFR_config.txt
+receptor = EGFR_receptor.pdbqt
+center_x = -48.873
+center_y = 0.574
+center_z = -25.128
+size_x = 20
+size_y = 20
+size_z = 20
+
+
+10. EGFR üçün docking
+Catechin ilə ilk sınaq:
+.\Vina.exe --config EGFR_config.txt --ligand Catechin.pdbqt --out EGFR_Catechin_out.pdbqt
+
+
+Qalan ligandların avtomatik docking edilməsi:
+Get-ChildItem *.pdbqt | Where-Object {$_.Name -notlike "*_out.pdbqt" -and $_.Name -notlike "*receptor.pdbqt"} | Where-Object {$_.Name -ne "catechin.pdbqt"} | ForEach-Object { .\Vina.exe --config EGFR_config.txt --ligand $_.FullName --out "EGFR_$($_.BaseName)_out.pdbqt" }
+
+
+11. Ligandların SDF-dən PDBQT formatına çevrilməsi
+İstifadə etdiyimiz Meeko əmri:
+C:\Users\ACER\AppData\Local\Programs\Python\Python312\Scripts\mk_prepare_ligand.exe -i <input.sdf> -o <output.pdbqt>
+
+
+Nümunə:
+C:\Users\ACER\AppData\Local\Programs\Python\Python312\Scripts\mk_prepare_ligand.exe -i Catechin.sdf -o Catechin.pdbqt
+
+
+Burada:
+- -i — giriş faylıdır.
+- -o — çıxış faylıdır.
+- -o hərfi kiçik ingilis o hərfidir, sıfır deyil.
+12. Bütün docking nəticələrinin CSV faylına çıxarılması
+Bu əmr 63 docking nəticəsinin hər birindən birinci Vina nəticəsini götürərək cədvəl yaradır:
+Get-ChildItem *_out.pdbqt | ForEach-Object { $line = Select-String "REMARK VINA RESULT" $_.FullName | Select-Object -First 1; [PSCustomObject]@{Target=($_.BaseName -split "_")[0]; Ligand=($_.BaseName -replace "^(EGFR|KRAS|MET)_","" -replace "_out$",""); Affinity=($line.Line -split "\s+")[3]} } | Export-Csv "docking_results.csv" -NoTypeInformation
+
+
+13. CSV faylının mövcudluğunun yoxlanılması
+Test-Path .\docking_results.csv
+
+
+14. Hədəf adlarının standartlaşdırılması
+Import-Csv .\docking_results.csv | ForEach-Object { $_.Target=$_.Target.ToUpper(); $_ } | Export-Csv "docking_results_final.csv" -NoTypeInformation
+
+
+15. Yekun CSV faylının yoxlanılması
+Test-Path .\docking_results_final.csv
+
+
+16. CSV faylının Notepad-də açılması
+notepad .\docking_results_final.csv
+
+
+17. Üç hədəfin nəticələrinin yan-yana göstərilməsi
+Bu kod hər ligandın KRAS, MET və EGFR nəticələrini bir sətirdə göstərir:
+Import-Csv .\docking_results_final.csv | Group-Object Ligand | ForEach-Object { $x=$_.Group; [PSCustomObject]@{Ligand=$_.Name; KRAS=($x | Where-Object Target -eq "KRAS").Affinity; MET=($x | Where-Object Target -eq "MET").Affinity; EGFR=($x | Where-Object Target -eq "EGFR").Affinity} } | Format-Table -AutoSize
